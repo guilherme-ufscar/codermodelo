@@ -135,7 +135,7 @@ export default function Admin() {
           {(['posts', 'ebooks'] as const).map((t) => (
             <button key={t} onClick={() => setTab(t)}
               className={`pb-3 px-1 text-sm font-semibold capitalize border-b-2 transition-colors ${tab === t ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
-              {t === 'posts' ? 'Posts do Blog' : 'Ebooks'}
+              {t === 'posts' ? 'Posts de Newsletters' : 'Ebooks'}
             </button>
           ))}
         </div>

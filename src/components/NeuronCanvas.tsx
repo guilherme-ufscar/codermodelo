@@ -6,13 +6,13 @@ import * as THREE from 'three';
 const isMobile = () => typeof window !== 'undefined' && window.innerWidth < 768;
 
 const solutionNodes = [
-  { label: 'Apps',        solved: 'Mobilidade para os seus clientes — Atendimento inteligente 24/7' },
-  { label: 'Plataformas', solved: 'Infraestrutura cloud robusta e segura — Dados em segurança e estruturados' },
-  { label: 'Sistemas',    solved: 'Operações integradas e escaláveis — Fluxos da empresa bem definidos — Processos claros' },
-  { label: 'CRM',         solved: 'Relacionamento e vendas otimizados — Aumento das vendas e crescimento previsível' },
-  { label: 'Dashboards',  solved: 'Decisões baseadas em dados — Decisões baseadas em dados em tempo real' },
-  { label: 'ERP',         solved: 'Gestão completa em um único lugar — Informações centralizadas — Controle total do negócio' },
-  { label: 'Sites',       solved: 'Presença digital e geração de lead — Estrutura que gera leads reais' },
+  { label: 'Apps',        solved: 'Atendimento inteligente 24/7' },
+  { label: 'Plataformas', solved: 'Dados em Segurança e estruturado' },
+  { label: 'Sistemas',    solved: 'Fluxos da empresa bem definidos - Processos claros' },
+  { label: 'CRM',         solved: 'Aumento das vendas e crescimento previsível' },
+  { label: 'Dashboards',  solved: 'Decisões baseadas em dados em tempo real' },
+  { label: 'ERP',         solved: 'Informações Centralizadas - Controle Total do Negócio' },
+  { label: 'Sites',       solved: 'Estrutura que gera leads reais' },
   { label: 'Automações',  solved: 'Processos executados automaticamente' },
   { label: 'Softwares',   solved: 'Soluções sob medida para seu negócio' },
   { label: 'IA',          solved: 'Inteligência artificial aplicada ao negócio' },

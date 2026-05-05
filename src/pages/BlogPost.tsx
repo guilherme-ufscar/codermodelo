@@ -63,7 +63,7 @@ export default function BlogPost() {
       <Navbar />
       <main className="min-h-screen pt-32 pb-24 flex flex-col items-center justify-center gap-4">
         <p className="text-2xl font-bold text-foreground">Artigo não encontrado.</p>
-        <Link to="/blog" className="text-primary hover:underline">← Voltar ao blog</Link>
+        <Link to="/blog" className="text-primary hover:underline">← Voltar às newsletters</Link>
       </main>
       <FooterSection />
     </>
@@ -76,7 +76,7 @@ export default function BlogPost() {
         <div className="max-w-3xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <Link to="/blog" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-8">
-              <ArrowLeft className="w-4 h-4" /> Voltar ao blog
+              <ArrowLeft className="w-4 h-4" /> Voltar às newsletters
             </Link>
             <time className="block text-xs text-muted-foreground uppercase tracking-widest mb-3">
               {format(new Date(post.created_at), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
