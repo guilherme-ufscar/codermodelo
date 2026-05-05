@@ -27,7 +27,7 @@ export default function Blog() {
             transition={{ duration: 0.8, ease }}
             className="mb-16"
           >
-            <h1 className="text-section text-foreground">BLOG</h1>
+            <h1 className="text-section text-foreground">NEWSLETTERS</h1>
             <div className="divider-line my-4" />
             <p className="text-body-lg text-muted-foreground max-w-xl">
               Insights, artigos e conteúdos sobre transformação digital para o seu negócio.
