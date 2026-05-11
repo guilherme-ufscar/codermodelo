@@ -68,6 +68,11 @@ const upload = multer({ storage });
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
+// Serve static files in production
+const distDir = path.join(ROOT, 'dist');
+app.use(express.static(distDir));
+app.use('/uploads', express.static(uploadsDir));
+
 function uid() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
@@ -232,6 +237,11 @@ app.post('/api/notify', auth, async (req, res) => {
   res.json({ ok: true, sent: subscribers.length });
 });
 
+// SPA fallback
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(distDir, 'index.html'));
+});
+
 app.listen(PORT, () => {
-  console.log(`\n✅ Servidor local: http://localhost:${PORT}\n`);
+  console.log(`\n✅ Servidor rodando na porta ${PORT}\n`);
 });
