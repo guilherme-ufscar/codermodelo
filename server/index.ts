@@ -238,7 +238,7 @@ app.post('/api/notify', auth, async (req, res) => {
 });
 
 // SPA fallback
-app.get('*', (_req, res) => {
+app.get('/{*splat}', (_req, res) => {
   res.sendFile(path.join(distDir, 'index.html'));
 });
 
