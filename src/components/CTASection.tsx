@@ -55,7 +55,7 @@ export default function CTASection() {
           transition={{ duration: 0.8, delay: 0.3, ease }}
           className="mt-12 space-y-4"
         >
-          <a href="#" className="btn-cta-primary text-lg px-12 py-5">
+          <a href="https://wa.me/5551984663786" target="_blank" rel="noopener noreferrer" className="btn-cta-primary text-lg px-12 py-5">
             Descubra como reduzir custos →
           </a>
           <p className="text-muted-foreground text-sm mt-4">

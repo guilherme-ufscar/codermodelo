@@ -45,7 +45,7 @@ for (let i = 0; i < FIXED_NODES.length; i++) {
 
 type PillPos = { x: number; y: number; tx: string; ty: string } | null;
 
-function NeuronNode({ position, color, hovered, onPointerOver, onPointerOut, onClick, nodeIndex, onPillPos }: {
+function NeuronNode({ position, color, hovered, onPointerOver, onPointerOut, onClick, nodeIndex, onPillPos, isHint, onHintPos }: {
   position: [number, number, number];
   color: string;
   hovered: boolean;
@@ -54,6 +54,8 @@ function NeuronNode({ position, color, hovered, onPointerOver, onPointerOut, onC
   onClick: () => void;
   nodeIndex: number;
   onPillPos: (pos: PillPos) => void;
+  isHint?: boolean;
+  onHintPos?: (pos: PillPos) => void;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const { camera, gl } = useThree();
@@ -63,7 +65,9 @@ function NeuronNode({ position, color, hovered, onPointerOver, onPointerOut, onC
   useFrame(({ clock }) => {
     if (!meshRef.current) return;
     if (!hovered) {
-      const target = baseScale + Math.sin(clock.elapsedTime * 2 + nodeIndex) * 0.008;
+      const amplitude = isHint ? 0.04 : 0.008;
+      const speed = isHint ? 3 : 2;
+      const target = baseScale + Math.sin(clock.elapsedTime * speed + nodeIndex) * amplitude;
       meshRef.current.scale.lerp(new THREE.Vector3(target, target, target), 0.1);
     } else {
       meshRef.current.scale.lerp(new THREE.Vector3(baseScale, baseScale, baseScale), 0.1);
@@ -76,6 +80,14 @@ function NeuronNode({ position, color, hovered, onPointerOver, onPointerOut, onC
       const py = (-projected.y * 0.5 + 0.5) * rect.height + rect.top;
 
       onPillPos({ x: px, y: py - 38, tx: '-50%', ty: '-100%' });
+    }
+    if (isHint && !hovered && onHintPos) {
+      meshRef.current.getWorldPosition(tempVec);
+      const projected = tempVec.clone().project(camera);
+      const rect = gl.domElement.getBoundingClientRect();
+      const px = (projected.x * 0.5 + 0.5) * rect.width + rect.left;
+      const py = (-projected.y * 0.5 + 0.5) * rect.height + rect.top;
+      onHintPos({ x: px, y: py - 38, tx: '-50%', ty: '-100%' });
     }
   });
 
@@ -150,15 +162,18 @@ function ParticleField({ count, color, radius }: { count: number; color: string;
   );
 }
 
-function NeuronScene({ onPillPos, hoveredIndex, setHoveredIndex }: {
+function NeuronScene({ onPillPos, hoveredIndex, setHoveredIndex, hasInteracted, onHintPos }: {
   onPillPos: (pos: PillPos) => void;
   hoveredIndex: number | null;
   setHoveredIndex: (i: number | null) => void;
+  hasInteracted: boolean;
+  onHintPos: (pos: PillPos) => void;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const { gl, viewport } = useThree();
   const scale = Math.min(1.4, viewport.width * 0.35);
   const handlePillPos = useCallback((pos: PillPos) => onPillPos(pos), [onPillPos]);
+  const handleHintPos = useCallback((pos: PillPos) => onHintPos(pos), [onHintPos]);
 
   useEffect(() => {
     gl.domElement.style.cursor = hoveredIndex !== null ? 'pointer' : 'default';
@@ -192,6 +207,8 @@ function NeuronScene({ onPillPos, hoveredIndex, setHoveredIndex }: {
           onClick={() => setHoveredIndex(hoveredIndex === i ? null : i)}
           nodeIndex={i}
           onPillPos={hoveredIndex === i ? handlePillPos : () => {}}
+          isHint={i === 0 && !hasInteracted}
+          onHintPos={i === 0 && !hasInteracted ? handleHintPos : undefined}
         />
       ))}
       <ParticleField count={50} color="#ed7c3a" radius={2.2} />
@@ -203,8 +220,16 @@ export default function NeuronCanvas({ className = '' }: { className?: string })
   const [mounted, setMounted] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [pillPos, setPillPos] = useState<PillPos>(null);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [hintPos, setHintPos] = useState<PillPos>(null);
 
   useEffect(() => setMounted(true), []);
+
+  const handleSetHovered = useCallback((i: number | null) => {
+    setHoveredIndex(i);
+    if (i === null) setPillPos(null);
+    if (i !== null && !hasInteracted) setHasInteracted(true);
+  }, [hasInteracted]);
 
   if (!mounted) return <div className={`${className} bg-muted rounded-3xl`} />;
 
@@ -227,11 +252,43 @@ export default function NeuronCanvas({ className = '' }: { className?: string })
             <NeuronScene
               onPillPos={setPillPos}
               hoveredIndex={hoveredIndex}
-              setHoveredIndex={(i) => { setHoveredIndex(i); if (i === null) setPillPos(null); }}
+              setHoveredIndex={handleSetHovered}
+              hasInteracted={hasInteracted}
+              onHintPos={setHintPos}
             />
           </Float>
         </Canvas>
       </Suspense>
+
+      {!hasInteracted && hintPos && (
+        <div
+          style={{
+            position: 'fixed',
+            left: hintPos.x,
+            top: hintPos.y,
+            transform: `translate(${hintPos.tx}, ${hintPos.ty})`,
+            pointerEvents: 'none',
+            zIndex: 9999,
+            padding: isMobile() ? '4px 10px' : '5px 14px',
+            borderRadius: '9999px',
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255,255,255,0.35)',
+            boxShadow: '0 2px 16px rgba(0,0,0,0.15)',
+            color: 'rgba(10, 6, 25, 0.9)',
+            fontSize: isMobile() ? '10px' : '11px',
+            fontWeight: 500,
+            whiteSpace: 'nowrap',
+            lineHeight: '1.4',
+            letterSpacing: '0.02em',
+            textAlign: 'center',
+            animation: 'pulse-hint 2s ease-in-out infinite',
+          }}
+        >
+          Toque para explorar
+        </div>
+      )}
 
       {node && pillPos && (
         <div

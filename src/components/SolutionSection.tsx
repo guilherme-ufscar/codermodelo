@@ -33,6 +33,12 @@ const rightLabels = solutionNodes.slice(5, 10);
 
 export default function SolutionSection() {
   const [hovered, setHovered] = useState<number | null>(null);
+  const [hasInteracted, setHasInteracted] = useState(false);
+
+  const handleHover = (i: number | null) => {
+    setHovered(i);
+    if (i !== null && !hasInteracted) setHasInteracted(true);
+  };
 
   return (
     <section className="py-16 md:py-24 px-6 md:px-16">
@@ -61,8 +67,8 @@ export default function SolutionSection() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: i * 0.1, ease }}
                 className="flex items-center gap-3 cursor-default"
-                onMouseEnter={() => setHovered(i)}
-                onMouseLeave={() => setHovered(null)}
+                onMouseEnter={() => handleHover(i)}
+                onMouseLeave={() => handleHover(null)}
               >
                 <span
                   className="text-label transition-colors duration-300"
@@ -124,8 +130,8 @@ export default function SolutionSection() {
                 return (
                   <g
                     key={i}
-                    onMouseEnter={() => setHovered(i)}
-                    onMouseLeave={() => setHovered(null)}
+                    onMouseEnter={() => handleHover(i)}
+                    onMouseLeave={() => handleHover(null)}
                     style={{ cursor: 'default' }}
                   >
                     {isHov && (
@@ -156,6 +162,21 @@ export default function SolutionSection() {
                 );
               })}
 
+              {/* Hint pulse on first node */}
+              {!hasInteracted && (() => {
+                const hintPos = getPos(0, solutionNodes.length);
+                return (
+                  <g style={{ pointerEvents: 'none' }}>
+                    <circle cx={hintPos.x} cy={hintPos.y} r={14} fill="hsl(261 79% 47% / 0.3)"
+                      style={{ animation: 'svg-pulse-hint 2s ease-in-out infinite' }} />
+                    <text x={hintPos.x} y={hintPos.y - 28} textAnchor="middle"
+                      fontSize="11" fontWeight="500" fill="hsl(261 79% 47%)">
+                      Toque para explorar
+                    </text>
+                  </g>
+                );
+              })()}
+
               {/* Center node with AXYR */}
               <circle cx={CX} cy={CY} r={65} fill="hsl(261 79% 47%)" />
               <circle cx={CX} cy={CY} r={74} fill="none"
@@ -181,8 +202,8 @@ export default function SolutionSection() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: i * 0.1, ease }}
                   className="flex items-center gap-3 cursor-default"
-                  onMouseEnter={() => setHovered(idx)}
-                  onMouseLeave={() => setHovered(null)}
+                  onMouseEnter={() => handleHover(idx)}
+                  onMouseLeave={() => handleHover(null)}
                 >
                   <div
                     className="w-2 h-2 rounded-full transition-all duration-300"
@@ -214,7 +235,7 @@ export default function SolutionSection() {
             viewport={{ once: true }}
             transition={{ duration: 1.2, ease }}
           >
-            <svg viewBox="200 20 500 460" className="w-full" style={{ overflow: 'visible' }}>
+            <svg viewBox="150 0 600 500" className="w-full max-w-[340px] mx-auto" style={{ overflow: 'visible' }}>
               {solutionNodes.map((_, i) => {
                 const pos = getPos(i, solutionNodes.length);
                 return (
@@ -241,6 +262,20 @@ export default function SolutionSection() {
                   </g>
                 );
               })}
+              {/* Hint pulse on first node mobile */}
+              {!hasInteracted && (() => {
+                const hintPos = getPos(0, solutionNodes.length);
+                return (
+                  <g style={{ pointerEvents: 'none' }}>
+                    <circle cx={hintPos.x} cy={hintPos.y} r={16} fill="hsl(261 79% 47% / 0.3)"
+                      style={{ animation: 'svg-pulse-hint 2s ease-in-out infinite' }} />
+                    <text x={hintPos.x} y={hintPos.y - 28} textAnchor="middle"
+                      fontSize="12" fontWeight="500" fill="hsl(261 79% 47%)">
+                      Toque para explorar
+                    </text>
+                  </g>
+                );
+              })()}
               <circle cx={CX} cy={CY} r={70} fill="hsl(261 79% 47%)" />
               <image
                 href="/images/logo-branca.svg"

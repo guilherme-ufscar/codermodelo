@@ -146,7 +146,7 @@ export default function Cases() {
           >
             <h2 className="text-2xl font-bold text-foreground mb-4">Quer um resultado assim na sua empresa?</h2>
             <p className="text-muted-foreground mb-8">Agende uma conversa gratuita e descubra como podemos ajudar.</p>
-            <a href="/#contato" className="btn-cta-primary">
+            <a href="https://wa.me/5551984663786" target="_blank" rel="noopener noreferrer" className="btn-cta-primary">
               Descubra como reduzir custos →
             </a>
           </motion.div>
