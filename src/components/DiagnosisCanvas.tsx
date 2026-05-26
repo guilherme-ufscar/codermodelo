@@ -37,7 +37,7 @@ const FIXED_NODES = fibonacciSphere(10, 1.2);
 
 type PillPos = { x: number; y: number; tx: string; ty: string } | null;
 
-function DiagnosisNode({ position, hovered, onPointerOver, onPointerOut, onClick, nodeIndex, onPillPos }: {
+function DiagnosisNode({ position, hovered, onPointerOver, onPointerOut, onClick, nodeIndex, onPillPos, isHint, onHintPos }: {
   position: [number, number, number];
   hovered: boolean;
   onPointerOver: () => void;
@@ -45,6 +45,8 @@ function DiagnosisNode({ position, hovered, onPointerOver, onPointerOut, onClick
   onClick: () => void;
   nodeIndex: number;
   onPillPos: (pos: PillPos) => void;
+  isHint?: boolean;
+  onHintPos?: (pos: PillPos) => void;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const { camera, gl } = useThree();
@@ -55,7 +57,9 @@ function DiagnosisNode({ position, hovered, onPointerOver, onPointerOut, onClick
     if (!meshRef.current) return;
 
     if (!hovered) {
-      const target = baseScale + Math.sin(clock.elapsedTime * 2 + nodeIndex) * 0.008;
+      const amplitude = isHint ? 0.04 : 0.008;
+      const speed = isHint ? 3 : 2;
+      const target = baseScale + Math.sin(clock.elapsedTime * speed + nodeIndex) * amplitude;
       meshRef.current.scale.lerp(new THREE.Vector3(target, target, target), 0.1);
     } else {
       meshRef.current.scale.lerp(new THREE.Vector3(baseScale, baseScale, baseScale), 0.1);
@@ -69,6 +73,15 @@ function DiagnosisNode({ position, hovered, onPointerOver, onPointerOut, onClick
       const py = (-projected.y * 0.5 + 0.5) * rect.height + rect.top;
 
       onPillPos({ x: px, y: py - 38, tx: '-50%', ty: '-100%' });
+    }
+
+    if (isHint && !hovered && onHintPos) {
+      meshRef.current.getWorldPosition(tempVec);
+      const projected = tempVec.clone().project(camera);
+      const rect = gl.domElement.getBoundingClientRect();
+      const px = (projected.x * 0.5 + 0.5) * rect.width + rect.left;
+      const py = (-projected.y * 0.5 + 0.5) * rect.height + rect.top;
+      onHintPos({ x: px, y: py - 38, tx: '-50%', ty: '-100%' });
     }
   });
 
@@ -128,10 +141,12 @@ function ParticleField() {
   );
 }
 
-function DiagnosisScene({ onPillPos, hoveredIndex, setHoveredIndex }: {
+function DiagnosisScene({ onPillPos, hoveredIndex, setHoveredIndex, hasInteracted, onHintPos }: {
   onPillPos: (pos: PillPos) => void;
   hoveredIndex: number | null;
   setHoveredIndex: (i: number | null) => void;
+  hasInteracted: boolean;
+  onHintPos: (pos: PillPos) => void;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const { gl, viewport } = useThree();
@@ -149,6 +164,7 @@ function DiagnosisScene({ onPillPos, hoveredIndex, setHoveredIndex }: {
   });
 
   const handlePillPos = useCallback((pos: PillPos) => onPillPos(pos), [onPillPos]);
+  const handleHintPos = useCallback((pos: PillPos) => onHintPos(pos), [onHintPos]);
 
   return (
     <group ref={groupRef} scale={scale} onPointerMissed={() => setHoveredIndex(null)}>
@@ -162,6 +178,8 @@ function DiagnosisScene({ onPillPos, hoveredIndex, setHoveredIndex }: {
           onClick={() => setHoveredIndex(hoveredIndex === i ? null : i)}
           nodeIndex={i}
           onPillPos={hoveredIndex === i ? handlePillPos : () => {}}
+          isHint={i === 0 && !hasInteracted}
+          onHintPos={i === 0 && !hasInteracted ? handleHintPos : undefined}
         />
       ))}
       <ParticleField />
@@ -173,8 +191,16 @@ export default function DiagnosisCanvas({ className = '' }: { className?: string
   const [mounted, setMounted] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [pillPos, setPillPos] = useState<PillPos>(null);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [hintPos, setHintPos] = useState<PillPos>(null);
 
   useEffect(() => setMounted(true), []);
+
+  const handleSetHovered = useCallback((i: number | null) => {
+    setHoveredIndex(i);
+    if (i === null) setPillPos(null);
+    if (i !== null && !hasInteracted) setHasInteracted(true);
+  }, [hasInteracted]);
 
   if (!mounted) return <div className={`${className} bg-muted rounded-3xl`} />;
 
@@ -197,11 +223,43 @@ export default function DiagnosisCanvas({ className = '' }: { className?: string
             <DiagnosisScene
               onPillPos={setPillPos}
               hoveredIndex={hoveredIndex}
-              setHoveredIndex={(i) => { setHoveredIndex(i); if (i === null) setPillPos(null); }}
+              setHoveredIndex={handleSetHovered}
+              hasInteracted={hasInteracted}
+              onHintPos={setHintPos}
             />
           </Float>
         </Canvas>
       </Suspense>
+
+      {!hasInteracted && hintPos && (
+        <div
+          style={{
+            position: 'fixed',
+            left: hintPos.x,
+            top: hintPos.y,
+            transform: `translate(${hintPos.tx}, ${hintPos.ty})`,
+            pointerEvents: 'none',
+            zIndex: 9999,
+            padding: isMobile() ? '4px 10px' : '5px 14px',
+            borderRadius: '9999px',
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255,255,255,0.35)',
+            boxShadow: '0 2px 16px rgba(0,0,0,0.15)',
+            color: 'rgba(10, 6, 25, 0.9)',
+            fontSize: isMobile() ? '10px' : '11px',
+            fontWeight: 500,
+            whiteSpace: 'nowrap',
+            lineHeight: '1.4',
+            letterSpacing: '0.02em',
+            textAlign: 'center',
+            animation: 'pulse-hint 2s ease-in-out infinite',
+          }}
+        >
+          Toque para explorar
+        </div>
+      )}
 
       {bubble && pillPos && (
         <div

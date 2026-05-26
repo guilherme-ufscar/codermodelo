@@ -78,7 +78,7 @@ export default function HeroSection() {
             transition={{ duration: 0.8, delay: 1, ease }}
             className="flex flex-wrap gap-4 justify-center lg:justify-start"
           >
-            <a href="#contato" className="btn-cta-primary">
+            <a href="https://wa.me/5551984663786" target="_blank" rel="noopener noreferrer" className="btn-cta-primary">
               Descubra como reduzir custos →
             </a>
           </motion.div>
@@ -89,10 +89,10 @@ export default function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.2, delay: 0.3, ease }}
-          className="w-full lg:w-[45%] h-[500px] lg:h-[700px] relative overflow-visible"
+          className="w-full lg:w-[45%] h-[380px] md:h-[500px] lg:h-[700px] relative overflow-visible"
         >
           <NeuronCanvas className="w-full h-full" />
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
             <span className="tag-tech">Seu negócio transformado</span>
           </div>
         </motion.div>
