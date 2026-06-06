@@ -264,8 +264,10 @@ export default function NeuronCanvas({ className = '' }: { className?: string })
         <div
           style={{
             position: 'fixed',
-            left: hintPos.x,
-            top: hintPos.y,
+            left: isMobile()
+              ? Math.max(80, Math.min((typeof window !== 'undefined' ? window.innerWidth : 375) - 80, hintPos.x))
+              : hintPos.x,
+            top: Math.min(hintPos.y, (typeof window !== 'undefined' ? window.innerHeight : 800) - 100),
             transform: `translate(${hintPos.tx}, ${hintPos.ty})`,
             pointerEvents: 'none',
             zIndex: 9999,
@@ -294,8 +296,10 @@ export default function NeuronCanvas({ className = '' }: { className?: string })
         <div
           style={{
             position: 'fixed',
-            left: pillPos.x,
-            top: pillPos.y,
+            left: isMobile()
+              ? Math.max(108, Math.min((typeof window !== 'undefined' ? window.innerWidth : 375) - 108, pillPos.x))
+              : pillPos.x,
+            top: Math.min(pillPos.y, (typeof window !== 'undefined' ? window.innerHeight : 800) - 100),
             transform: `translate(${pillPos.tx}, ${pillPos.ty})`,
             pointerEvents: 'none',
             zIndex: 9999,
