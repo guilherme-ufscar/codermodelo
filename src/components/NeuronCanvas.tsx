@@ -267,7 +267,7 @@ export default function NeuronCanvas({ className = '' }: { className?: string })
             left: isMobile()
               ? Math.max(80, Math.min((typeof window !== 'undefined' ? window.innerWidth : 375) - 80, hintPos.x))
               : hintPos.x,
-            top: Math.min(hintPos.y, (typeof window !== 'undefined' ? window.innerHeight : 800) - 100),
+            top: Math.min(hintPos.y, (typeof window !== 'undefined' ? window.innerHeight : 800) - 120),
             transform: `translate(${hintPos.tx}, ${hintPos.ty})`,
             pointerEvents: 'none',
             zIndex: 9999,
@@ -297,14 +297,14 @@ export default function NeuronCanvas({ className = '' }: { className?: string })
           style={{
             position: 'fixed',
             left: isMobile()
-              ? Math.max(108, Math.min((typeof window !== 'undefined' ? window.innerWidth : 375) - 108, pillPos.x))
+              ? Math.max(116, Math.min((typeof window !== 'undefined' ? window.innerWidth : 375) - 116, pillPos.x))
               : pillPos.x,
-            top: Math.min(pillPos.y, (typeof window !== 'undefined' ? window.innerHeight : 800) - 100),
+            top: Math.min(pillPos.y, (typeof window !== 'undefined' ? window.innerHeight : 800) - 120),
             transform: `translate(${pillPos.tx}, ${pillPos.ty})`,
             pointerEvents: 'none',
             zIndex: 9999,
-            padding: isMobile() ? '4px 10px' : '5px 14px',
-            borderRadius: '9999px',
+            padding: isMobile() ? '6px 12px' : '5px 14px',
+            borderRadius: isMobile() ? '14px' : '9999px',
             background: 'rgba(255, 255, 255, 0.15)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
@@ -313,7 +313,8 @@ export default function NeuronCanvas({ className = '' }: { className?: string })
             color: 'rgba(10, 6, 25, 0.9)',
             fontSize: isMobile() ? '10px' : '11px',
             fontWeight: 500,
-            whiteSpace: 'nowrap',
+            whiteSpace: isMobile() ? 'normal' : 'nowrap',
+            maxWidth: isMobile() ? '200px' : 'none',
             lineHeight: '1.4',
             letterSpacing: '0.02em',
             textAlign: 'center',

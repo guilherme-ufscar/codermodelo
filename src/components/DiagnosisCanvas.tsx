@@ -266,7 +266,7 @@ export default function DiagnosisCanvas({ className = '' }: { className?: string
           style={{
             position: 'fixed',
             left: isMobile()
-              ? Math.max(108, Math.min((typeof window !== 'undefined' ? window.innerWidth : 375) - 108, pillPos.x))
+              ? Math.max(116, Math.min((typeof window !== 'undefined' ? window.innerWidth : 375) - 116, pillPos.x))
               : pillPos.x,
             top: pillPos.y,
             transform: `translate(${pillPos.tx}, ${pillPos.ty})`,
