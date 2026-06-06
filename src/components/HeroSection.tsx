@@ -9,7 +9,7 @@ const ease = [0.16, 1, 0.3, 1] as const;
 
 export default function HeroSection() {
   return (
-    <section id="home" className="relative min-h-screen flex items-center pt-24 pb-16 px-6 md:px-16">
+    <section id="home" className="relative min-h-screen flex items-center pt-24 pb-24 md:pb-16 px-6 md:px-16">
       <div className="w-full max-w-[1600px] mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-0">
         {/* Left */}
         <div className="w-full lg:w-[55%] space-y-8 text-center lg:text-left">
@@ -103,7 +103,7 @@ export default function HeroSection() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-muted-foreground"
+        className="absolute bottom-2 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-muted-foreground"
       >
         <span className="text-xs tracking-widest uppercase">Scroll</span>
         <ArrowDown className="w-4 h-4 animate-bounce" />
