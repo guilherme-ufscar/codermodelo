@@ -36,7 +36,7 @@ export default function DiagnosisSection() {
           transition={{ duration: 1, ease }}
           className="flex flex-col items-center gap-0"
         >
-          <DiagnosisCanvas className="w-full max-w-5xl h-[420px] md:h-[650px] mx-auto" />
+          <DiagnosisCanvas className="w-full max-w-5xl h-[650px] mx-auto" />
           <span className="tag-tech -mt-8 md:-mt-12">Seu negócio hoje</span>
         </motion.div>
       </div>
