@@ -89,7 +89,7 @@ export default function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.2, delay: 0.3, ease }}
-          className="w-full lg:w-[45%] h-[380px] md:h-[500px] lg:h-[700px] relative overflow-visible"
+          className="w-full lg:w-[45%] h-[500px] lg:h-[700px] relative overflow-visible"
         >
           <NeuronCanvas className="w-full h-full" />
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
